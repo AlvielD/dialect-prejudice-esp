@@ -10,7 +10,9 @@ from transformers import (
     RobertaForMaskedLM, 
     RobertaTokenizer, 
     T5ForConditionalGeneration,
-    T5Tokenizer
+    T5Tokenizer,
+    BertForMaskedLM,
+    BertTokenizer
 )
 
 import prompting
@@ -30,6 +32,7 @@ if not os.path.exists(PROBS_PATH):
 GPT2_MODELS = ["gpt2", "gpt2-medium", "gpt2-large", "gpt2-xl"]
 ROBERTA_MODELS = ["roberta-base", "roberta-large"]
 T5_MODELS = ["t5-small", "t5-base", "t5-large", "t5-3b"]
+BERT_MODELS = ["dccuchile/bert-base-spanish-wwm-uncased"]
 
 # Define OpenAI names
 OPENAI_NAMES = {
@@ -53,6 +56,10 @@ def load_model(model_name):
         return T5ForConditionalGeneration.from_pretrained(
             model_name 
         )
+    elif model_name in BERT_MODELS:
+        return BertForMaskedLM.from_pretrained(
+            model_name
+        )
     else:
         raise ValueError(f"Model {model_name} not supported.")
 
@@ -70,6 +77,10 @@ def load_tokenizer(model_name):
     elif model_name in T5_MODELS:
         return T5Tokenizer.from_pretrained(
             model_name 
+        )
+    elif model_name in BERT_MODELS:
+        return BertTokenizer.from_pretrained(
+            model_name
         )
     else:
         raise ValueError(f"Model {model_name} not supported.")
@@ -104,6 +115,8 @@ def load_prompts(model_name, attribute, variable):
     if model_name == "gpt3":
         prompts = [p + " {{}}" for p in prompts]
         cal_prompts = [p + " {}" for p in cal_prompts]
+    if model_name in BERT_MODELS:
+        prompts = [p + " " for p in prompts]
     return prompts, cal_prompts
 
 
@@ -136,6 +149,13 @@ def load_attributes_gpt4(attribute_name, tok):
     attributes = [tok.encode(" " + a)[0] for a in attributes]
     return attributes
 
+def load_attributes_bert(attribute_name, tok):
+    with open(ATTRIBUTES_PATH.format(attribute_name), "r", encoding="utf8") as f:
+        attributes = f.read().strip().split("\n")
+    attributes = {a: tok.tokenize(" " + a) for a in attributes}
+    #attributes = [tok.tokenize(" " + a)[0] for a in attributes]
+    return attributes
+
 
 # Function to load variable pairs
 def load_pairs(variable):
@@ -155,6 +175,9 @@ def compute_probs(model, model_name, input_ids, labels):
     elif model_name in T5_MODELS:
         output = model(input_ids=input_ids, labels=labels)
         probs = F.softmax(output.logits, dim=-1)[0][-1] 
+    elif model_name in BERT_MODELS:
+        output = model(input_ids=input_ids, labels=labels)
+        probs = F.softmax(output.logits, dim=-1)[0][-1] #TODO: not sure what dimension contain probs on BERT, CHEK!
     else:
         raise ValueError(f"Model {model_name} not supported.")
     return probs
@@ -231,6 +254,48 @@ def get_attribute_probs_gpt4(prompt, attributes, model):
     top_attributes = [a for a, _ in top_attributes_logprobs]
     top_logprobs = [l_p for _, l_p in top_attributes_logprobs]
     return top_attributes, top_logprobs
+
+# Function to retrieve attribute probabilities for BERT-based models
+def get_attribute_probs_bert(prompt, attributes, model, model_name, tok, device, labels):
+    """Retrieve the attribute probabilities by multiplying the probabilities of 
+    each token associated to the word given a prompt contaning the generated tokens
+    until now from the original one given and the model
+
+    Args:
+        promt (_type_): _description_
+        attributes (_type_): dict containing all the tokens associated to the given attribute
+        model (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    probs_attribute = []
+
+    for attribute, tokens in attributes.items():
+        aux_prompt = prompt     # Create a copy that will be modified
+        cum_prob = 1.0          # Cummulative probability
+        for token in tokens:
+            # Encode the prompt
+            input_ids = torch.tensor([tok.encode(aux_prompt + "[MASK]")])
+            input_ids = input_ids.to(device)
+
+            # Pass prompt through model
+            probs = compute_probs(
+                model, 
+                model_name, 
+                input_ids, 
+                labels
+            )
+
+            # Select attribute probabilities and accumulate the prob
+            cum_prob *= probs[tok.convert_tokens_to_ids(token)].item()
+            #print(f"Generated prompt for attribute {attribute}: {aux_prompt}")
+            aux_prompt += token
+
+        # Append the probability of the attribute to the solution
+        probs_attribute.append(cum_prob)
+    
+    return probs_attribute
 
 
 # Function to calibrate probabilities
