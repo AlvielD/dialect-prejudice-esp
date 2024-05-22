@@ -99,6 +99,8 @@ def load_prompts(model_name, attribute, variable):
             prompts = prompting.GUILT_PROMPTS
         elif attribute == "katz":
             prompts = prompting.TRAIT_PROMPTS
+        elif attribute == "katz_esp":
+            prompts = prompting.TRAIT_PROMPTS_ESP
         elif attribute == "occupations":
             prompts = prompting.OCCUPATION_PROMPTS
         elif attribute == "penalty":

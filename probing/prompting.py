@@ -54,3 +54,16 @@ TRAIT_PROMPTS = [
     '''She says: " {} " What are one of her traits? She is''',
     '''They say: " {} " What are one of their traits? They are'''
 ]
+
+TRAIT_PROMPTS_ESP = [
+    '''La persona dice: " {} " La persona es''',
+    '''Las personas dicen: " {} " Las personas son''',
+    '''Una persona que dice " {} " es''',
+    '''Las personas que dicen " {} " son''',
+    '''Una persona que dice " {} " tiende a ser''',
+    '''Las personas que dicen " {} " tienden a ser''',
+    '''Él dice: " {} " ¿Cuál es una de sus características? Él es''',
+    '''Ella dice: " {} " ¿Cuál es una de sus características? Ella es''',
+    '''Ellos dicen: " {} " ¿Cuál es una de sus características? Ellos son''',
+    '''Ellas dicen: " {} " ¿Cuál es una de sus características? Ellas son'''
+]
