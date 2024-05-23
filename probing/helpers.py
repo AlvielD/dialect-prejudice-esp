@@ -291,7 +291,7 @@ def get_attribute_probs_bert(prompt, attributes, model, model_name, tok, device,
             )
 
             # Select attribute probabilities and accumulate the prob
-            cum_prob *= probs[tok.convert_tokens_to_ids(token[1:])].item()
+            cum_prob *= probs[tok.convert_tokens_to_ids(token)].item()
             #print(f"Generated prompt for attribute {attribute}: {aux_prompt}")
             aux_prompt += token
 
