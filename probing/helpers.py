@@ -178,8 +178,8 @@ def compute_probs(model, model_name, input_ids, labels):
         output = model(input_ids=input_ids, labels=labels)
         probs = F.softmax(output.logits, dim=-1)[0][-1] 
     elif model_name in BERT_MODELS:
-        output = model(input_ids=input_ids, labels=labels)
-        probs = F.softmax(output.logits, dim=-1)[0][-1] #TODO: not sure what dimension contain probs on BERT, CHEK!
+        output = model(input_ids=input_ids)
+        probs = F.softmax(output.logits, dim=-1)[0][-2] # Implemented as RoBERTa since it is based on it
     else:
         raise ValueError(f"Model {model_name} not supported.")
     return probs
