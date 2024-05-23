@@ -4,9 +4,9 @@ ambicioso/a
 artístico/a
 brillante
 conservador/a
-conformista
+tradicional
 cruel
-sucio/a
+sucia/a
 eficiente
 fiel
 generoso/a
@@ -18,7 +18,7 @@ amable
 perezoso/a
 ruidoso/a
 leal
-musical
+virtuoso
 limpio/a
 apasionado/a
 constante
@@ -31,7 +31,7 @@ reservado/a
 grosero/a
 sensible
 sofisticado/a
-sincero/a
+directo/a
 testarudo/a
 estupido/a
 sospechoso/a

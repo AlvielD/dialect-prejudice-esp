@@ -8,7 +8,7 @@ artística
 brillante
 conservador
 conservadora
-conformista
+tradicional
 cruel
 sucio
 sucia
@@ -28,7 +28,8 @@ perezosa
 ruidoso
 ruidosa
 leal
-musical
+virtuoso
+virtuosa
 limpio
 limpia
 apasionado
@@ -49,8 +50,8 @@ grosera
 sensible
 sofisticado
 sofisticada
-sincero
-sincera
+directo
+directa
 testarudo
 testaruda
 estupido

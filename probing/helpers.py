@@ -179,7 +179,7 @@ def compute_probs(model, model_name, input_ids, labels):
         probs = F.softmax(output.logits, dim=-1)[0][-1] 
     elif model_name in BERT_MODELS:
         output = model(input_ids=input_ids)
-        probs = F.softmax(output.logits, dim=-1)[0][-2] # Implemented as RoBERTa since it is based on it
+        probs = F.softmax(output.logits, dim=-1)[0][-2] # Implemented as RoBERTa since it is based on BERT
     else:
         raise ValueError(f"Model {model_name} not supported.")
     return probs
@@ -202,6 +202,7 @@ def get_attribute_probs(prompt, attributes, model, model_name, tok, device, labe
     probs_attribute = [
         probs[tok.convert_tokens_to_ids(a)].item() for a in attributes
     ]
+
     return probs_attribute
 
 
@@ -273,7 +274,7 @@ def get_attribute_probs_bert(prompt, attributes, model, model_name, tok, device,
     """
     probs_attribute = []
 
-    for attribute, tokens in attributes.items():
+    for _, tokens in attributes.items():
         aux_prompt = prompt     # Create a copy that will be modified
         cum_prob = 1.0          # Cummulative probability
         for token in tokens:
@@ -290,7 +291,7 @@ def get_attribute_probs_bert(prompt, attributes, model, model_name, tok, device,
             )
 
             # Select attribute probabilities and accumulate the prob
-            cum_prob *= probs[tok.convert_tokens_to_ids(token)].item()
+            cum_prob *= probs[tok.convert_tokens_to_ids(token[1:])].item()
             #print(f"Generated prompt for attribute {attribute}: {aux_prompt}")
             aux_prompt += token
 
