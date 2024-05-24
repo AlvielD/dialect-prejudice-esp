@@ -1,4 +1,5 @@
 import os
+import json
 
 import numpy as np
 import openai
@@ -19,6 +20,7 @@ import prompting
 
 # Define path to attribute lists
 ATTRIBUTES_PATH = os.path.abspath("../data/attributes/{}.txt")
+ATTRIBUTES_ESP_PATH = os.path.abspath("../data/attributes/{}.json")
 
 # Define path to variables
 VARIABLES_PATH = os.path.abspath("../data/pairs/{}.txt")
@@ -30,9 +32,9 @@ if not os.path.exists(PROBS_PATH):
 
 # Define model groups
 GPT2_MODELS = ["gpt2", "gpt2-medium", "gpt2-large", "gpt2-xl"]
-ROBERTA_MODELS = ["roberta-base", "roberta-large"]
+ROBERTA_MODELS = ["roberta-base", "roberta-large", "bertin-project/bertin-roberta-base-spanish"]
 T5_MODELS = ["t5-small", "t5-base", "t5-large", "t5-3b"]
-BERT_MODELS = ["dccuchile/bert-base-spanish-wwm-uncased"]
+BERT_MODELS = ["dccuchile/bert-base-spanish-wwm-uncased", "google-bert/bert-base-uncased"]
 
 # Define OpenAI names
 OPENAI_NAMES = {
@@ -153,9 +155,17 @@ def load_attributes_gpt4(attribute_name, tok):
 
 def load_attributes_bert(attribute_name, tok):
     with open(ATTRIBUTES_PATH.format(attribute_name), "r", encoding="utf8") as f:
-        attributes = f.read().strip().split("\n")
-    attributes = {a: tok.tokenize(" " + a) for a in attributes}
-    #attributes = [tok.tokenize(" " + a)[0] for a in attributes]
+        attributes_list = f.read().strip().split("\n")
+    attributes = {a: tok.tokenize(" " + a) for a in attributes_list}
+    #for a in attributes:
+    #    attributes[a][0] = attributes[a][0][1:]
+    return attributes
+
+
+def load_attributes_esp(attribute_name, tok):
+    with open(ATTRIBUTES_ESP_PATH.format(attribute_name)) as f:
+        attributes = json.load(f)
+    attributes = [{key: [tok.tokenize(" " + g) for g in genres] for key, genres in attribute.items()} for attribute in attributes]
     return attributes
 
 
@@ -292,11 +302,57 @@ def get_attribute_probs_bert(prompt, attributes, model, model_name, tok, device,
 
             # Select attribute probabilities and accumulate the prob
             cum_prob *= probs[tok.convert_tokens_to_ids(token)].item()
+            
             #print(f"Generated prompt for attribute {attribute}: {aux_prompt}")
             aux_prompt += token
 
         # Append the probability of the attribute to the solution
         probs_attribute.append(cum_prob)
+    
+    return probs_attribute
+
+# Function to retrieve attribute probabilities for BERT-based models
+def get_attribute_probs_esp(prompt, attributes, model, model_name, tok, device, labels):
+    """Retrieve the attribute probabilities by multiplying the probabilities of 
+    each token associated to the word given a prompt contaning the generated tokens
+    until now from the original one given and the model
+
+    Args:
+        promt (_type_): _description_
+        attributes (_type_): dict containing all the tokens associated to the given attribute
+        model (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    probs_attribute = []
+
+    for attribute in attributes:
+        acc_prob = 0.0
+        for genre in attribute:
+            aux_prompt = prompt     # Create a copy that will be modified
+            cum_prob = 1.0          # Cummulative probability
+            for token in genre:
+                # Encode the prompt
+                input_ids = torch.tensor([tok.encode(aux_prompt + "[MASK]")])
+                input_ids = input_ids.to(device)
+
+                # Pass prompt through model
+                probs = compute_probs(
+                    model, 
+                    model_name, 
+                    input_ids, 
+                    labels
+                )
+
+                # Select attribute probabilities and accumulate the prob
+                cum_prob *= probs[tok.convert_tokens_to_ids(token)].item()
+                #print(f"Generated prompt for attribute {attribute}: {aux_prompt}")
+                aux_prompt += token
+
+            acc_prob += cum_prob
+            # Append the probability of the attribute to the solution
+            probs_attribute.append(acc_prob)
     
     return probs_attribute
 
