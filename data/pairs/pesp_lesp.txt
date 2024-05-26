@@ -71,3 +71,19 @@ Apunta la fecha en el almanaque	Apunta la fecha en el calendario
 Hace frío, ponte la casaca	Hace frío, ponte la chaqueta
 Voy a cocinar un choclo	Voy a cocinar una mazorca
 Se va a malograr el coche	Se va a estropear el coche
+¿Me pasas una cobija?, tengo frío	¿Me pasas una manta?, tengo frío
+Ponte una chamarra, hace frío y te vas a enfermar	Ponte una chaqueta, hace frío y te vas a poner malo.
+se me antoja una chela bien fría	tengo ganas de una cerveza bien fría
+no menciones nada sobre ella o va a enojarse	no digas nada sobre ella o va a enfadarse
+necesito una computadora nueva para programar	necesito un ordenador nuevo para programar
+me encanta cómo se te ve esa playera 	me encanta cómo te queda esa camiseta
+¿Me pasas mi celular? Necesito mandar un mensaje	¿Me pasas mi móvil? Necesito mandar un mensaje
+ese carro ya se ve viejo, es del 2007	ese coche ya se ve viejos, es del 2007
+me compré unos audífonos para cuando vaya al gym	me compré unos cascos para cuando vaya al gym
+mi jugo favorito es el de naranja con zanahoria	mi zumo favorito es el de naranja con zanahoria
+tenía que llenar el formato con lapicero azul, no negro	tenía que llenar el formulario con bolígrafo azul, no negro
+el volante de mi auto ya se ve viejo	el volante de mi coche ya se ve viejo
+prefiero tener una laptop que una computadora de escritorio	prefiero tener un portátil que un ordenador de escritorio
+¡Hizo una peda para su cumpleaños! Estuvo muy buena, tomamos chelas y vodka toda la noche	¡Hizo una fiesta por su cumpleaños! Estuvo muy bien, tomamos cervezas y vodka toda la noche
+¿Puedes prender la bocina? Hay que escuchar música	¿Puedes encender el altavoz? Hay que escuchar música
+¿Me pasas mi bolso? Ahí traigo mi celular	¿Me pasas mi bolso? Ahí está mi móvil
