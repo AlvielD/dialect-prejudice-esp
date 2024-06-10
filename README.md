@@ -12,3 +12,5 @@ The relevant files for this project (the ones that I modified) are those related
 - The prompts translated in spanish. [prompting.py](https://github.com/AlvielD/dialect-prejudice-esp/blob/main/probing/prompting.py)
 
 Read the notebook for more information on the performed experiment.
+
+The full report for the project can be found [here](https://github.com/AlvielD/dialect-prejudice-esp/blob/main/Ethics_Project_Report.pdf)
